@@ -356,31 +356,35 @@ int aggregate_verify(
 
 
 int main()
-{   Vehicle V[20];
+{   Vehicle V[40];
     pairing_t pairing;
      pbc_param_t param;
      struct timespec start, end, start1, end1, start2, end2, start3, end3, start4, end4, start5, end5, start6, end6, start7, end7, start8, end8, start12, end12, start_12, end_12;
      double elapsed, elapsed1, elapsed2, elapsed3, elapsed4, elapsed5, elapsed6, elapsed7, elapsed8, elapsed12, elapsed_12;
     pbc_param_init_a_gen(param, 160, 512);
      pairing_init_pbc_param(pairing, param);
-    const char *msgs[20] = {
+    const char *msgs[40] = {
     "model 1", "model 2", "model 3", "model 4", "model 5",
     "model 6", "model 7", "model 8", "model 9", "model 10",
     "model 11","model 12","model 13","model 14","model 15",
-    "model 16","model 17","model 18","model 19","model 20"
+    "model 16","model 17","model 18","model 19","model 20",
+    "model 21", "model 22", "model 23", "model 24", "model 25",
+    "model 26", "model 27", "model 28", "model 29", "model 30",
+    "model 31","model 32","model 33","model 34","model 35",
+    "model 36","model 37","model 38","model 39","model 40"
      };
     const char *t="5th iteration";
     unsigned char hash_bin[20];
     sha1_binary(t, hash_bin);
     char hex_hash[41];  
-    element_t P, Q, B, Y, Z, y, z, h1i, h2i, h3i,  Vi[20], si[20], left, right;
+    element_t P, Q, B, Y, Z, y, z, h1i, h2i, h3i,  Vi[40], si[40], left, right;
     element_init_Zr(h1i, pairing);
     element_init_G1(h2i, pairing);
     element_init_Zr(h3i, pairing);
     element_init_G1(left, pairing);
     element_init_G1(right, pairing);
     
-     for(int i=0; i<20; i++){
+     for(int i=0; i<40; i++){
          element_init_G1(Vi[i], pairing);
          element_random(Vi[i]);
          element_init_G1(V[i].PID1i, pairing);
@@ -406,22 +410,23 @@ int main()
     element_random(Q);
     
     clock_gettime(CLOCK_MONOTONIC, &start);
+    for(int i=0; i<40; i++)
     Setup(P, Y, Z, y, z);
     clock_gettime(CLOCK_MONOTONIC, &end); 
-    elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;   
+    elapsed = ((end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9)/40;   
 
     
     
     clock_gettime(CLOCK_MONOTONIC, &start1);
-    for(int i=0; i<20; i++){
+    for(int i=0; i<40; i++){
     Extraction(V[i].ai, V[i].PID1i, V[i].PID2i, y, z, P, Vi[i], pairing); 
     }
      clock_gettime(CLOCK_MONOTONIC, &end1); 
-  elapsed1 = (end1.tv_sec - start1.tv_sec) + (end1.tv_nsec - start1.tv_nsec) / 1e9;   
+  elapsed1 = ((end1.tv_sec - start1.tv_sec) + (end1.tv_nsec - start1.tv_nsec) / 1e9)/40;   
        
     
     clock_gettime(CLOCK_MONOTONIC, &start12);
-    for(int i=0; i<20; i++){
+    for(int i=0; i<40; i++){
       element_mul_zn(left, P, V[i].ai);
       H1(h1i, V[i].PID1i, V[i].PID2i);
       element_mul_zn(right, Y, h1i);
@@ -435,20 +440,20 @@ int main()
           }
     }
     clock_gettime(CLOCK_MONOTONIC, &end12); 
-  elapsed12 = (end12.tv_sec - start12.tv_sec) + (end12.tv_nsec - start12.tv_nsec) / 1e9;   
+  elapsed12 = ((end12.tv_sec - start12.tv_sec) + (end12.tv_nsec - start12.tv_nsec) / 1e9)/40;   
      
     
     clock_gettime(CLOCK_MONOTONIC, &start2);
-    for(int i=0; i<20; i++){
+    for(int i=0; i<40; i++){
        sign(si[i], V[i].PID1i, V[i].PID2i, V[i].ai, V[i].Qi, msgs[i], t, pairing);
     } 
     clock_gettime(CLOCK_MONOTONIC, &end2); 
-    elapsed2 = (end2.tv_sec - start2.tv_sec) + (end2.tv_nsec - start2.tv_nsec) / 1e9;   
+    elapsed2 = ((end2.tv_sec - start2.tv_sec) + (end2.tv_nsec - start2.tv_nsec) / 1e9)/40;   
  
    
    
    clock_gettime(CLOCK_MONOTONIC, &start3);
-    for(int i=0; i<20; i++){
+    for(int i=0; i<40; i++){
         int valid=verify(pairing, si[i], V[i].PID1i, V[i].PID2i, P, Y, Q, msgs[i], t);
         if(valid)
            printf("Vehicle %d: signature is valid.\n", i);
@@ -460,7 +465,7 @@ int main()
   
     
     clock_gettime(CLOCK_MONOTONIC, &start4);
-    for(int i=1; i<20; i++){
+    for(int i=1; i<40; i++){
        element_add(si[0], si[0], si[i]);
     }
     
@@ -473,12 +478,14 @@ int main()
       clock_gettime(CLOCK_MONOTONIC, &end4); 
     elapsed4 = (end4.tv_sec - start4.tv_sec) + (end4.tv_nsec - start4.tv_nsec) / 1e9;   
     
-       printf("Execution time of Setup algorithm: %f seconds\n", elapsed);  
-   printf("Execution time of 20 extraction algorithm from TA's side: %f seconds\n", elapsed1); 
-     printf("Execution time of 20 extraction algorithm from Vehicle's side: %f seconds\n", elapsed12); 
-        printf("execution time of 20 signing algorithm: %f seconds\n", elapsed2);
-          printf("Execution time of 20 verification algorithm: %f seconds\n", elapsed3);    
-          printf("Execution time of an aggregate-verification algorithm of 20 models: %f seconds\n", elapsed4); 
+       printf("Execution time of a Setup algorithm: %f seconds\n", elapsed);  
+   printf("Execution time of an extraction algorithm from TA's side: %f seconds\n", elapsed1); 
+     printf("Execution time of an extraction algorithm from Vehicle's side: %f seconds\n", elapsed12); 
+        printf("execution time of a signing algorithm: %f seconds\n", elapsed2);
+        double k8=elapsed3/40;
+        printf("Execution time of a verification algorithm: %f seconds\n", k8);
+          printf("Execution time of 40 verification algorithm: %f seconds\n", elapsed3);    
+          printf("Execution time of an aggregate-verification algorithm of 40 models: %f seconds\n", elapsed4); 
     element_clear(h1i);
     element_clear(h2i);
     element_clear(h3i);
