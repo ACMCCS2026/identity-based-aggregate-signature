@@ -263,7 +263,7 @@ int main()
          element_init_G1(V[i].PID1i, pairing);
          element_init_G1(V[i].PID2i, pairing);
          element_init_Zr(V[i].ai, pairing); 
-         element_init_G1(si[i], pairing);
+         element_init_Zr(si[i], pairing);
          element_init_G1(V[i].U, pairing);
     }
 
