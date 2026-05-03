@@ -455,7 +455,7 @@ int main()
  
  for(int j=5; j<=40; j=j+5){
  clock_gettime(CLOCK_MONOTONIC, &start4);
-    for(int i=0; i<j; i++){
+    for(int i=1; i<j; i++){
        element_add(si[0], si[0], si[i]);
     }
     int q=j;
