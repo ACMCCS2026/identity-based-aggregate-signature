@@ -486,9 +486,9 @@ int main()
     
     for(int j=5; j<=40; j=j+5){
     clock_gettime(CLOCK_MONOTONIC, &start4);
-    for(int i=0; i<j; i++){
+    for(int i=1; i<j; i++){
        element_add(si[0], si[0], si[i]);
-       element_add(ti[0], ti[i], ti[i]);
+       element_add(ti[0], ti[0], ti[i]);
     }
     int q=j;
     for(int k=0; k<40; k++){
